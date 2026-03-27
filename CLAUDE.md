@@ -208,3 +208,14 @@ Wait for consent; never auto-create ADRs. Group related decisions (stacks, authe
 
 ## Code Standards
 See `.specify/memory/constitution.md` for code quality, testing, performance, security, and architecture principles.
+
+## Active Technologies
+- Python 3.11 (backend), TypeScript 5.x strict (frontend, Next.js 16+) + Better Auth 1.x + `jwt` plugin (frontend), FastAPI 0.111+ (002-user-auth)
+- Neon Serverless PostgreSQL — Better Auth manages `user`, `session`, `account` (002-user-auth)
+- Python 3.11 (backend), TypeScript 5.x strict (frontend, Next.js 16+) + FastAPI 0.111+, SQLModel 0.0.18+, asyncpg (backend); Next.js (001-task-crud)
+- Neon Serverless PostgreSQL — `Task` model managed by SQLModel (`table=True`); (001-task-crud)
+- Python 3.11 (backend), TypeScript 5.x strict (frontend, Next.js 16+) + `openai-agents` v0.13.1, `mcp` v1.26.0, `@openai/chatkit` v1.6.0, FastAPI 0.111+, SQLModel 0.0.18+, asyncpg (003-chatbot)
+- Neon Serverless PostgreSQL — new `conversation` table (append-only message rows) (003-chatbot)
+
+## Recent Changes
+- 002-user-auth: Added Python 3.11 (backend), TypeScript 5.x strict (frontend, Next.js 16+) + Better Auth 1.x + `jwt` plugin (frontend), FastAPI 0.111+

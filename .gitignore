@@ -1,0 +1,26 @@
+# Env files (never commit)
+backend/.env
+frontend/.env.local
+.env
+.env.local
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+dist/
+
+# Node
+node_modules/
+.next/
+out/
+
+# OS
+.DS_Store
+Thumbs.db
+nul
+
+# Claude Code local settings
+.claude/settings.local.json
