@@ -43,8 +43,8 @@ A full-stack todo application with user authentication and an AI-powered chatbot
 Copy the example env files and fill in your values:
 
 ```bash
-cp frontend/.env.example frontend/.env.local
-cp backend/.env.example backend/.env
+cd frontend/.env.example frontend/.env.local
+cd backend/.env.example backend/.env
 ```
 
 ### Run with Docker Compose
