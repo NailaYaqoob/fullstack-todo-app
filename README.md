@@ -4,7 +4,8 @@ A full-stack todo application with user authentication and an AI-powered chatbot
 
 ## Demo
 
-<video src="todo-app-demo.mp4" controls width="100%"></video>
+<video src="https://raw.githubusercontent.com/NailaImran/fullstack-todo-app/003-chatbot/todo-app-demo.mp4" controls width="100%">
+</video>
 
 ## Features
 
