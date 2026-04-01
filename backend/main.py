@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 DATABASE_URL = os.getenv("DATABASE_URL")
-BETTER_AUTH_SECRET = os.getenv("BETTER_AUTH_SECRET")c
+BETTER_AUTH_SECRET = os.getenv("BETTER_AUTH_SECRET")
 
 if not DATABASE_URL:
     raise RuntimeError("DATABASE_URL is not set — check backend/.env")

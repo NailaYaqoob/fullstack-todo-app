@@ -1,6 +1,13 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
+
+declare global {
+  interface Window {
+    SpeechRecognition: typeof SpeechRecognition;
+    webkitSpeechRecognition: typeof SpeechRecognition;
+  }
+}
 import { chatApi } from "@/lib/api";
 
 export const TASKS_CHANGED_EVENT = "chatkit:tasks-changed";
@@ -22,8 +29,12 @@ export default function ChatPanel() {
   const [isPending, setIsPending] = useState(false);
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isListening, setIsListening] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const voiceSupported = typeof window !== "undefined" &&
+    !!(window.SpeechRecognition ?? window.webkitSpeechRecognition);
 
   // Load history on mount
   useEffect(() => {
@@ -68,6 +79,39 @@ export default function ChatPanel() {
       inputRef.current?.focus();
     }
   }, [isPending, conversationId]);
+
+  function toggleVoice() {
+    const SR = window.SpeechRecognition ?? window.webkitSpeechRecognition;
+    if (!SR) return;
+
+    if (isListening) {
+      recognitionRef.current?.stop();
+      setIsListening(false);
+      return;
+    }
+
+    const rec = new SR();
+    rec.lang = "en-US";
+    rec.interimResults = true;
+    rec.continuous = false;
+
+    rec.onresult = (e) => {
+      const transcript = Array.from(e.results)
+        .map((r) => r[0].transcript)
+        .join("");
+      setInput(transcript);
+    };
+
+    rec.onerror = () => setIsListening(false);
+    rec.onend = () => {
+      setIsListening(false);
+      inputRef.current?.focus();
+    };
+
+    recognitionRef.current = rec;
+    rec.start();
+    setIsListening(true);
+  }
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -213,6 +257,25 @@ export default function ChatPanel() {
               </span>
             )}
           </div>
+          {voiceSupported && (
+            <button
+              onClick={toggleVoice}
+              disabled={isPending}
+              title={isListening ? "Stop recording" : "Voice input"}
+              className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
+                isListening
+                  ? "border-red-500/50 bg-red-600/20 text-red-400 animate-pulse"
+                  : "border-[#2a2a3f] bg-[#1a1a28] text-[#8888aa] hover:border-violet-500/40 hover:text-violet-400"
+              }`}
+            >
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                  d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                  d="M19 10v2a7 7 0 01-14 0v-2M12 19v4M8 23h8" />
+              </svg>
+            </button>
+          )}
           <button
             onClick={() => send(input)}
             disabled={isPending || !input.trim() || overLimit}
