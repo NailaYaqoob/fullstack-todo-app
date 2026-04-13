@@ -12,6 +12,7 @@ load_dotenv()
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 BETTER_AUTH_SECRET = os.getenv("BETTER_AUTH_SECRET")
+FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:3000")
 
 if not DATABASE_URL:
     raise RuntimeError("DATABASE_URL is not set — check backend/.env")
@@ -30,7 +31,7 @@ app = FastAPI(lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=[FRONTEND_URL, "http://localhost:3000"],
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["Authorization", "Content-Type"],
