@@ -3,9 +3,34 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 
 declare global {
+  interface SpeechRecognitionAlternative {
+    readonly transcript: string;
+    readonly confidence: number;
+  }
+  interface SpeechRecognitionResult {
+    readonly length: number;
+    [index: number]: SpeechRecognitionAlternative;
+  }
+  interface SpeechRecognitionResultList {
+    readonly length: number;
+    [index: number]: SpeechRecognitionResult;
+  }
+  interface SpeechRecognitionEvent extends Event {
+    results: SpeechRecognitionResultList;
+  }
+  interface SpeechRecognition extends EventTarget {
+    continuous: boolean;
+    interimResults: boolean;
+    lang: string;
+    start(): void;
+    stop(): void;
+    onresult: ((ev: SpeechRecognitionEvent) => void) | null;
+    onerror: ((ev: Event) => void) | null;
+    onend: ((ev: Event) => void) | null;
+  }
   interface Window {
-    SpeechRecognition: typeof SpeechRecognition;
-    webkitSpeechRecognition: typeof SpeechRecognition;
+    SpeechRecognition: new () => SpeechRecognition;
+    webkitSpeechRecognition: new () => SpeechRecognition;
   }
 }
 import { chatApi } from "@/lib/api";
