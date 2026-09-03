@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -21,7 +22,14 @@ export default function LoginPage() {
       if (result.error) {
         setError(result.error.message ?? "Sign in failed");
       } else {
-        router.push("/dashboard");
+        const callbackUrl = searchParams.get("callbackUrl");
+        // Only allow same-site relative paths as a redirect target.
+        const target =
+          callbackUrl && callbackUrl.startsWith("/") && !callbackUrl.startsWith("//")
+            ? callbackUrl
+            : "/dashboard";
+        router.push(target);
+        router.refresh();
       }
     } catch {
       setError("An unexpected error occurred");
@@ -77,5 +85,13 @@ export default function LoginPage() {
         </p>
       </div>
     </main>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<main className="min-h-screen bg-[#0a0a0f]" />}>
+      <LoginForm />
+    </Suspense>
   );
 }
